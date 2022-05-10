@@ -1,0 +1,22 @@
+{
+    "name": "Minimalist - Grass Path",
+    "size": 32,
+    "tiles": {
+        "list": [
+            {
+                "max": -1,
+                "name": "Tiles1.png"
+            }
+        ],
+        "size": 32
+    },
+    "sprites": {
+        "list": [
+            {
+                "max": -1,
+                "name": "Tiles1.png"
+            }
+        ],
+        "size": 32
+    }
+}
