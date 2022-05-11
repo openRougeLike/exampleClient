@@ -16,7 +16,7 @@ func main() {
 
 	LoadResourcePack()
 
-	ebiten.SetWindowSize(832, 832)
+	ebiten.SetWindowSize(SCREEN_DIMENSIONS, SCREEN_DIMENSIONS)
 	ebiten.SetWindowTitle("Example Client")
 
 	if err := ebiten.RunGame(&game); err != nil {

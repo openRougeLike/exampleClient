@@ -17,6 +17,7 @@ type ResourceManifest struct {
 	Size    int          `json:"size"`
 	Tiles   ResourceList `json:"tiles"`
 	Sprites ResourceList `json:"sprites"`
+	Backgrounds ResourceList `json:"backgrounds"`
 }
 
 type ResourceList struct {
@@ -34,6 +35,7 @@ type ResourcePack struct {
 	TileSize   int
 	Sprites    *ebiten.Image
 	SpriteSize int
+	Background *ebiten.Image
 }
 
 var CurrentResourcePack ResourcePack
@@ -61,6 +63,10 @@ func FetchResourcesPack(setName string, level int) ResourcePack {
 
 	pack.SpriteSize = sizeSprites
 	pack.TileSize = sizeTiles
+
+	bg, _ := manifest.Backgrounds.FetchImg(setName, level)
+
+	pack.Background = bg
 
 	return pack
 }

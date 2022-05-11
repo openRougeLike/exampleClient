@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	_ "image/png"
+	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -102,6 +103,8 @@ var TileMap = map[string][2]int{
 	"user_1": 		{9,1},
 	"user_2": 		{9,2},
 	"user_3": 		{9,3},
+
+	"SP_npcLore": 	{0, 0},
 }
 
 func BoolString(b bool) string {
@@ -146,20 +149,54 @@ func (t *TileInfoGen) String() (out string) {
 	return
 }
 
+func drawImg(screen *ebiten.Image, src *ebiten.Image, srcStartX, srcStartY, srcEndX, srcEndY, dstX, dstY int) {
+	srcRect := image.Rect(srcStartX, srcStartY, srcEndX, srcEndY)
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(float64(dstX), float64(dstY))
+	screen.DrawImage(src.SubImage(srcRect).(*ebiten.Image), op)
+}
+
 func DrawTile(screen *ebiten.Image, tileRef string, layoutX int, layoutY int) {
 	if resourceLoc, ok := TileMap[tileRef]; ok {
-		srcRect := image.Rect(resourceLoc[1]*CurrentResourcePack.TileSize, resourceLoc[0]*CurrentResourcePack.TileSize, (resourceLoc[1]+1)*CurrentResourcePack.TileSize, (resourceLoc[0]+1)*CurrentResourcePack.TileSize)
-
-		op := &ebiten.DrawImageOptions{}
-		op.GeoM.Translate(float64(layoutX*CurrentResourcePack.TileSize), float64(layoutY*CurrentResourcePack.TileSize))
-
-		screen.DrawImage(CurrentResourcePack.Tiles.SubImage(srcRect).(*ebiten.Image), op)
+		drawImg(screen, CurrentResourcePack.Tiles,
+			resourceLoc[1]*CurrentResourcePack.TileSize,
+			resourceLoc[0]*CurrentResourcePack.TileSize,
+			(resourceLoc[1]+1)*CurrentResourcePack.TileSize, 
+			(resourceLoc[0]+1)*CurrentResourcePack.TileSize,
+			layoutX*CurrentResourcePack.TileSize,
+			layoutY*CurrentResourcePack.TileSize,
+		)
 	} else {
 		panic(tileRef)
 	}
 }
 
+func DrawSprite(screen *ebiten.Image, sprite string, dstX, dstY int) {
+	if resourceLoc, ok := TileMap[sprite]; ok {
+		drawImg(screen, CurrentResourcePack.Sprites,
+			resourceLoc[1]*CurrentResourcePack.SpriteSize,
+			resourceLoc[0]*CurrentResourcePack.SpriteSize,
+			(resourceLoc[1]+1)*CurrentResourcePack.SpriteSize, 
+			(resourceLoc[0]+1)*CurrentResourcePack.SpriteSize,
+			dstX,
+			dstY,
+		)
+	} else {
+		panic(sprite)
+	}
+}
+
 func (g *Game) Draw(screen *ebiten.Image) {
+	switch g.Screen {
+	case S_Tile:
+		DrawTileScreen(g, screen)
+	case S_Lore:
+		DrawDialogEntities([]string{"SP_npcLore"}, screen)
+	}
+	
+}
+
+func DrawTileScreen(g *Game, screen *ebiten.Image) {
 	for layoutY := 0; layoutY < DIMENSIONS; layoutY++ {
 		for layoutX := 0; layoutX < DIMENSIONS; layoutX++ {
 			tileImg := "1111_1111"
@@ -273,5 +310,24 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		// TODO: Figure out what to do with dead guys
 		// TODO: Draw entities
 		DrawTile(screen, tileRef, coords[1], coords[0])
+	}
+}
+
+func DrawDialogEntities(sprites []string, screen *ebiten.Image) {
+	screen.DrawImage(CurrentResourcePack.Background, &ebiten.DrawImageOptions{})
+	
+	leftOverSpace := SCREEN_DIMENSIONS-(len(sprites)*CurrentResourcePack.SpriteSize*2)
+
+	if leftOverSpace < 0 {
+		panic("too many sprites!")
+	}
+
+	perSpace := int(math.Round(float64(leftOverSpace)/float64(len(sprites)+1)))
+
+	curX := perSpace
+
+	for _, sprite := range sprites {
+		DrawSprite(screen, sprite, curX, 355)
+		curX += perSpace
 	}
 }

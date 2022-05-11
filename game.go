@@ -7,6 +7,10 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
+const (
+	SCREEN_DIMENSIONS = 832
+)
+
 type Screen int8
 
 const (
