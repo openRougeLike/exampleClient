@@ -54,7 +54,7 @@ func FetchResourcesPack(setName string, level int) ResourcePack {
 	pack := ResourcePack{}
 
 	sprites, sizeSprites := manifest.Sprites.FetchImg(setName, level)
-	tiles, sizeTiles := manifest.Sprites.FetchImg(setName, level)
+	tiles, sizeTiles := manifest.Tiles.FetchImg(setName, level)
 
 	pack.Sprites = sprites
 	pack.Tiles = tiles

@@ -14,9 +14,17 @@
         "list": [
             {
                 "max": -1,
-                "name": "Tiles1.png"
+                "name": "Sprites.png"
             }
         ],
-        "size": 32
+        "size": 128
+    },
+    "backgrounds": {
+        "list": [
+            {
+                "max": -1,
+                "name": "Background1.png"
+            }
+        ]
     }
 }

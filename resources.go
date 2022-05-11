@@ -78,7 +78,6 @@ var TileMap = map[string][2]int{
 	"chest_open":      {6, 1},
 	"chest_rare":      {6, 2},
 	"chest_rare_open": {6, 3},
-	"user":            {6, 4},
 	"exit":            {6, 5},
 	"monster":           {6, 6},
 	"monster_done":      {6, 7},
@@ -98,6 +97,11 @@ var TileMap = map[string][2]int{
 	"npc_lore_7":   {8, 3},
 	"npc_lore_8":   {8, 4},
 	"npc_lore_9":   {8, 5},
+
+	"user_0": 		{9,0},
+	"user_1": 		{9,1},
+	"user_2": 		{9,2},
+	"user_3": 		{9,3},
 }
 
 func BoolString(b bool) string {
@@ -209,7 +213,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		}
 	}
 
-	DrawTile(screen, "user", g.Map.User[1], g.Map.User[0])
+	DrawTile(screen, "user_" + fmt.Sprint(g.Direction), g.Map.User[1], g.Map.User[0])
 	DrawTile(screen, "exit", g.Map.Exit[1], g.Map.Exit[0])
 
 	for str, info := range g.Map.ChestsInfo {

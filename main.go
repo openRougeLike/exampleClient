@@ -16,8 +16,8 @@ func main() {
 
 	LoadResourcePack()
 
-	ebiten.SetWindowSize(DIMENSIONS*CurrentResourcePack.TileSize, DIMENSIONS*CurrentResourcePack.TileSize)
-	ebiten.SetWindowTitle("Poggers Game")
+	ebiten.SetWindowSize(832, 832)
+	ebiten.SetWindowTitle("Example Client")
 
 	if err := ebiten.RunGame(&game); err != nil {
 		panic(err)
