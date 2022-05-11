@@ -42,6 +42,7 @@ var TileMap = map[string][2]int{
 	"1011_1111": {2, 1},
 	"1010_1111": {2, 2},
 	"1110_1111": {2, 3},
+	"arena":	 {2, 4},
 	"0000_1000": {2, 5},
 	"1000_1001": {2, 6},
 	"0000_0001": {2, 7},
@@ -79,8 +80,8 @@ var TileMap = map[string][2]int{
 	"chest_rare_open": {6, 3},
 	"user":            {6, 4},
 	"exit":            {6, 5},
-	"arena":           {6, 6},
-	"arena_done":      {6, 7},
+	"monster":           {6, 6},
+	"monster_done":      {6, 7},
 
 	"npc_weapon":  {7, 0},
 	"npc_armor":   {7, 1},
@@ -97,8 +98,6 @@ var TileMap = map[string][2]int{
 	"npc_lore_7":   {8, 3},
 	"npc_lore_8":   {8, 4},
 	"npc_lore_9":   {8, 5},
-	"monster":      {8, 6},
-	"monster_done": {8, 7},
 }
 
 func BoolString(b bool) string {
