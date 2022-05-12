@@ -27,6 +27,7 @@ type Game struct {
 
 type NPCProg struct {
 	Text []string
+	CurTextI int
 	TickSinceStart int
 }
 
@@ -40,13 +41,13 @@ func (g *Game) Update() error {
 		return nil
 	}
 
+	if keyHeld(ebiten.KeyZ) {
+		err = g.ZKey()
+	}
+
 	switch g.Screen {
 	case S_Tile:
 		dirs := map[Direction]bool{}
-
-		if keyHeld(ebiten.KeyZ) {
-			err = g.ZKey()
-		}
 	
 		dirs[DirUp] = keyHeld(ebiten.KeyArrowUp)
 		dirs[DirRight] = keyHeld(ebiten.KeyArrowRight)

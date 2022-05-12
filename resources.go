@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"image"
+	"image/color"
 	_ "image/png"
 	"math"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text"
 )
 
 type TileInfoGen struct {
@@ -149,10 +151,14 @@ func (t *TileInfoGen) String() (out string) {
 	return
 }
 
-func drawImg(screen *ebiten.Image, src *ebiten.Image, srcStartX, srcStartY, srcEndX, srcEndY, dstX, dstY int) {
-	srcRect := image.Rect(srcStartX, srcStartY, srcEndX, srcEndY)
+func drawImg(screen *ebiten.Image, src *ebiten.Image, srcStartX, srcStartY, srcSize, dstX, dstY int, scale float64) {
+	srcRect := image.Rect(int(math.Round(float64(srcStartX))), int(math.Round(float64(srcStartY)*scale)), srcStartX + srcSize, srcStartY + srcSize)
 	op := &ebiten.DrawImageOptions{}
+
+	op.GeoM.Scale(scale, scale)
+	
 	op.GeoM.Translate(float64(dstX), float64(dstY))
+
 	screen.DrawImage(src.SubImage(srcRect).(*ebiten.Image), op)
 }
 
@@ -161,10 +167,10 @@ func DrawTile(screen *ebiten.Image, tileRef string, layoutX int, layoutY int) {
 		drawImg(screen, CurrentResourcePack.Tiles,
 			resourceLoc[1]*CurrentResourcePack.TileSize,
 			resourceLoc[0]*CurrentResourcePack.TileSize,
-			(resourceLoc[1]+1)*CurrentResourcePack.TileSize, 
-			(resourceLoc[0]+1)*CurrentResourcePack.TileSize,
+			CurrentResourcePack.TileSize,
 			layoutX*CurrentResourcePack.TileSize,
 			layoutY*CurrentResourcePack.TileSize,
+			1,
 		)
 	} else {
 		panic(tileRef)
@@ -176,10 +182,10 @@ func DrawSprite(screen *ebiten.Image, sprite string, dstX, dstY int) {
 		drawImg(screen, CurrentResourcePack.Sprites,
 			resourceLoc[1]*CurrentResourcePack.SpriteSize,
 			resourceLoc[0]*CurrentResourcePack.SpriteSize,
-			(resourceLoc[1]+1)*CurrentResourcePack.SpriteSize, 
-			(resourceLoc[0]+1)*CurrentResourcePack.SpriteSize,
+			CurrentResourcePack.SpriteSize,
 			dstX,
 			dstY,
+			2,
 		)
 	} else {
 		panic(sprite)
@@ -192,8 +198,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		DrawTileScreen(g, screen)
 	case S_Lore:
 		DrawDialogEntities([]string{"SP_npcLore"}, screen)
+		DrawTextbox(screen)
+		fmt.Println(g.NPC.CurTextI)
+		text.Draw(screen, g.NPC.Text[g.NPC.CurTextI], CurrentResourcePack.Font, 30, 660, color.White)
 	}
-	
 }
 
 func DrawTileScreen(g *Game, screen *ebiten.Image) {
@@ -316,7 +324,7 @@ func DrawTileScreen(g *Game, screen *ebiten.Image) {
 func DrawDialogEntities(sprites []string, screen *ebiten.Image) {
 	screen.DrawImage(CurrentResourcePack.Background, &ebiten.DrawImageOptions{})
 	
-	leftOverSpace := SCREEN_DIMENSIONS-(len(sprites)*CurrentResourcePack.SpriteSize*2)
+	leftOverSpace := SCREEN_DIMENSIONS-(len(sprites)*256)
 
 	if leftOverSpace < 0 {
 		panic("too many sprites!")
@@ -324,10 +332,23 @@ func DrawDialogEntities(sprites []string, screen *ebiten.Image) {
 
 	perSpace := int(math.Round(float64(leftOverSpace)/float64(len(sprites)+1)))
 
+	
 	curX := perSpace
-
+	
 	for _, sprite := range sprites {
-		DrawSprite(screen, sprite, curX, 355)
-		curX += perSpace
+		DrawSprite(screen, sprite, curX, 200)
+		curX += perSpace + 256
 	}
+}
+
+var textRect = ebiten.NewImage(SCREEN_DIMENSIONS, 232)
+
+func TextureInit() {
+	textRect.Fill(color.RGBA{0,0,0,190})
+}
+
+func DrawTextbox(screen *ebiten.Image) {
+	op := &ebiten.DrawImageOptions{}
+	op.GeoM.Translate(0, 600)
+	screen.DrawImage(textRect, op)
 }

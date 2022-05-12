@@ -16,6 +16,8 @@ func main() {
 
 	LoadResourcePack()
 
+	TextureInit()
+	
 	ebiten.SetWindowSize(SCREEN_DIMENSIONS, SCREEN_DIMENSIONS)
 	ebiten.SetWindowTitle("Example Client")
 

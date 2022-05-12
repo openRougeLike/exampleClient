@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 func (g *Game) ArrowKey(dirs map[Direction]bool) *APIError {
 	if dirs[DirDown] && dirs[DirUp] {
 		delete(dirs, DirDown)
@@ -60,11 +62,17 @@ func (g *Game) ZKey() *APIError {
 				if g.Map.NPC[c.String()] >= NPCLore0 {
 					g.SetScreen(S_Lore)
 					g.NPC = NPCProg{
-						Text: []string{"Hello there! I am very angry. I hate you in fact.", 
+						Text: []string{"Shut up. I stg please shut the fuck up.", 
 										"AHAHAHAHAHHAHAHAHAHAHAHA PRANKED",
 						},
 					}
 				}
+		}
+	case S_Lore:
+		g.NPC.CurTextI++
+		fmt.Println(g.NPC.CurTextI)
+		if g.NPC.CurTextI == len(g.NPC.Text) {
+			g.SetScreen(S_Tile)
 		}
 	}
 

@@ -10,6 +10,8 @@ import (
 	"sort"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/opentype"
 )
 
 type ResourceManifest struct {
@@ -18,6 +20,7 @@ type ResourceManifest struct {
 	Tiles   ResourceList `json:"tiles"`
 	Sprites ResourceList `json:"sprites"`
 	Backgrounds ResourceList `json:"backgrounds"`
+	Font 	string `json:"font"`
 }
 
 type ResourceList struct {
@@ -36,6 +39,7 @@ type ResourcePack struct {
 	Sprites    *ebiten.Image
 	SpriteSize int
 	Background *ebiten.Image
+	Font 	   font.Face
 }
 
 var CurrentResourcePack ResourcePack
@@ -68,6 +72,22 @@ func FetchResourcesPack(setName string, level int) ResourcePack {
 
 	pack.Background = bg
 
+	fontRaw, err := ioutil.ReadFile(filepath.Join("tiles", setName, manifest.Font))
+	PanicIfErr(err)
+
+	fontParsed, err := opentype.Parse(fontRaw)
+	PanicIfErr(err)
+
+	face, err := opentype.NewFace(fontParsed, &opentype.FaceOptions{
+		Size:    24,
+		DPI:     72,
+		Hinting: font.HintingFull,
+	})
+
+	PanicIfErr(err)
+
+	pack.Font = face
+	
 	return pack
 }
 
